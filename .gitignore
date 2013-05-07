@@ -34,3 +34,11 @@ nosetests.xml
 .mr.developer.cfg
 .project
 .pydevproject
+
+# Temp files
+[Tt]mp/*
+[Tt]emp/*
+
+# Visual Studio local files
+*.suo
+*.html

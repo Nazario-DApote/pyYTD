@@ -4,8 +4,9 @@ import os, sys
 import getopt
 import exceptions
 import datetime
-from plist import PlayListManager
+from playListManager import PlayListManager
 import os.path
+from ytDownloader import ytDownloader
 
 class pyYouTubeDownloader:
 
@@ -112,8 +113,12 @@ class pyYouTubeDownloader:
         print "fileName: %s" % filename
 
         print "Fetching video informations ..."
-        # TODO
-        pass
+        
+        urls = ytDownloader.GetYouTubeVideoUrls([url])
+        if len(urls) > 0:
+            # TODO
+            # Choose video and download
+            pass
 
     def main(self, argv):
         self.title()
@@ -156,7 +161,7 @@ class pyYouTubeDownloader:
                     else:
                         raise FileNotFoundException("File %s not found!" % self.fileName)
                 else:
-                    self.downloadVideo(url, fileName)
+                    self.downloadVideo(self.url, self.fileName)
                 pass
 
             self.waitKeyPress()

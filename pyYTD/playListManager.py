@@ -3,6 +3,7 @@ import os
 from xml.etree import ElementTree as ET
 import re
 from datetime import datetime, date, timedelta
+from ytdHelper import Helper
 
 class VideoItem:
     _Date = date(1900, 1, 1)
@@ -67,26 +68,9 @@ class PlayListManager:
     def Playlist(self):
         return self._Playlist
 
-    _urlValid = re.compile(
-            r'^(?:http|ftp)s?://' # http:// or https://
-            r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|' #domain...
-            r'localhost|' #localhost...
-            r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})' # ...or ip
-            r'(?::\d+)?' # optional port
-            r'(?:/?|[/?]\S+)$', re.IGNORECASE)
-
     '''Get all video links from a YouTube playlist link'''
     def __init__(self):
         pass
-
-    def __parseUrl__(serf, url):
-        match = re.search(r'(?:http://www.youtube.com/playlist\?&?list=)(?P<Pid>.+)&?', url)
-        if match:
-            t = match.groups("Pid")
-            return "http://gdata.youtube.com/feeds/api/playlists/" + match.groups("Pid")[0]
-
-    def CheckUrl(serf, url):
-        return serf._urlValid.match(url)
 
     def Fetch(self, url):
         try:
@@ -95,6 +79,12 @@ class PlayListManager:
 
         except Exception, err:
             print str(err)
+
+    def __parseUrl__(serf, url):
+        match = re.search(r'(?:http://www.youtube.com/playlist\?&?list=)(?P<Pid>.+)&?', url)
+        if match:
+            t = match.groups("Pid")
+            return "http://gdata.youtube.com/feeds/api/playlists/" + match.groups("Pid")[0]
 
     def __parsePlaylist__(self, url):
             u = urllib.urlopen(url)
@@ -110,6 +100,8 @@ class PlayListManager:
             root = ET.parse(u).getroot()
             if root is not None:
                 self.__getEntries__(root)
+
+            u.close()
 
     def __getEntries__(self, root):
         nextUrl = str()
@@ -131,7 +123,7 @@ class PlayListManager:
                     if entry.tag == (namespace + 'published'):
                         vi.Date = self.__gt__(entry.text)
                     if entry.tag == (namespace + 'link') and entry.attrib['rel']:
-                        if entry.attrib['rel'] == 'alternate' and self.CheckUrl(entry.attrib['href']):
+                        if entry.attrib['rel'] == 'alternate' and Helper.CheckUrl(entry.attrib['href']):
                             vi.Link = entry.attrib['href']
                     if entry.tag == (namespace + 'content'):
                         vi.Description = entry.text
@@ -142,7 +134,7 @@ class PlayListManager:
 
                 self._Playlist.append(vi)
 
-        if self.CheckUrl(nextUrl):
+        if Helper.CheckUrl(nextUrl):
             self.__parsePlaylist__(nextUrl)
         
     def Save(self, filename, full):

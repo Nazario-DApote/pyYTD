@@ -13,7 +13,7 @@
     <Name>pyYTD</Name>
     <RootNamespace>pyYTD</RootNamespace>
     <LaunchProvider>Standard Python launcher</LaunchProvider>
-    <CommandLineArguments>-d -l  test.txt</CommandLineArguments>
+    <CommandLineArguments>-d http://www.youtube.com/watch/?v=6KtOzh0StTc&amp;hq=1&amp;submit=1</CommandLineArguments>
     <InterpreterPath />
     <InterpreterArguments />
   </PropertyGroup>
@@ -26,8 +26,10 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="ytdHelper.py" />
     <Compile Include="pyYTD.py" />
-    <Compile Include="plist.py" />
+    <Compile Include="playListManager.py" />
+    <Compile Include="ytDownloader.py" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
 </Project>
